@@ -30,7 +30,7 @@ The calculation engine is deliberately isolated in `tax-rules.js` and `calculato
 ## 2026 rules and assumptions
 
 - Employee contribution rate: **9.19%**, used as an explicit simplified standard private-sector assumption. Actual contribution rates can vary by sector, category and other circumstances.
-- IRPEF: **23% up to €28,000; 35% from €28,001 to €50,000; 43% above €50,000**.
+- IRPEF: **23% up to €28,000; 33% from €28,001 to €50,000; 43% above €50,000**. The 33% second bracket is the 2026 rule introduced by the 2026 Budget Law.
 - Employee-work deduction: annual full-year formula based on taxable/overall income.
 - Additional employee deduction: €1,000 for taxable/overall income above €20,000 and up to €32,000, then progressively reduced to zero at €40,000.
 - €65 increase to the employee-work deduction for taxable/overall income above €25,000 and up to €35,000.
@@ -38,11 +38,9 @@ The calculation engine is deliberately isolated in `tax-rules.js` and `calculato
 - Lombardia regional surcharge: progressive 2026 rates of 1.23%, 1.58%, 1.72% and 1.73% across the applicable income bands.
 - Milan municipal surcharge: **0.8%**, with exemption for taxable income up to **€23,000**.
 
-The 2026 IRPEF brackets and €1,955 employee deduction are established by the Italian tax reform framework. The tax-wedge measures are sourced from the 2025 Budget Law and the current tax guidance; the current consolidated income-tax framework entered into force on 4 July 2026.
-
 ## Important scope decision
 
-This is a **prototype, not a payroll engine**. The 9.19% employee contribution rate is intentionally a modelling assumption. The prototype also excludes contribution ceilings, sector-specific rates, treatment-integration edge cases, 13th-salary timing, welfare/fringe benefits, bonuses, dependants, personal deductions, multiple employments, other income and year-end payroll adjustments.
+This is a **prototype, not a payroll engine**. The 9.19% employee contribution rate is intentionally a modelling assumption. The prototype also excludes contribution ceilings, sector-specific rates, treatment-integrative edge cases, 13th-salary timing, welfare/fringe benefits, bonuses, dependants, personal deductions, multiple employments, other income and year-end payroll adjustments.
 
 This makes the model explainable during an interview: every simplification is explicit and can be replaced by a versioned rule set in a production implementation.
 
@@ -59,7 +57,8 @@ This makes the model explainable during an interview: every simplification is ex
 
 ## Primary sources used for validation
 
-- **Normattiva — Legge 30 dicembre 2024, n. 207**, including the three IRPEF brackets, €1,955 employee deduction and tax-wedge measures.
+- **Normattiva — Legge 30 dicembre 2025, n. 199**, 2026 Budget Law: 2026 IRPEF second bracket changed to 33%.
+- **Normattiva — Legge 30 dicembre 2024, n. 207**, including the employee deduction and tax-wedge framework.
 - **Agenzia delle Entrate — Dichiarazione precompilata**, guidance on the tax-wedge percentages and additional employee deduction.
 - **Dipartimento delle Finanze — Fiscalità locale**, Lombardia 2026 regional IRPEF rates.
 - **Comune di Milano**, municipal IRPEF rate and €23,000 exemption.
