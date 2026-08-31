@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Stima del netto da RAL per un lavoratore dipendente standard a Milano." />
+  <title>Net Salary Calculator — Italy</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow">JET HR · PRODUCT BUILDER TASK</div>
+      <h1>Quanto vale davvero la tua RAL?</h1>
+      <p>Inserisci la retribuzione annua lorda e ottieni una stima trasparente del netto annuale e mensile, con il dettaglio delle principali trattenute.</p>
+    </section>
+
+    <section class="calculator-card">
+      <div class="input-panel">
+        <label for="ral">Retribuzione annua lorda (RAL)</label>
+        <div class="input-wrap">
+          <span>€</span>
+          <input id="ral" type="number" min="10000" max="250000" step="500" value="40000" inputmode="decimal" />
+        </div>
+        <div class="assumptions">
+          <strong>Scenario standard</strong>
+          <span>Tempo indeterminato · Milano · nessuna agevolazione</span>
+        </div>
+        <button id="calculate" type="button">Calcola il netto <span>→</span></button>
+        <p id="error" class="error" role="alert"></p>
+      </div>
+
+      <div class="result-panel" aria-live="polite">
+        <div class="result-label">NETTO ANNUALE STIMATO</div>
+        <div id="netAnnual" class="net-number">—</div>
+        <div class="monthly"><span>Netto medio mensile</span><strong id="netMonthly">—</strong></div>
+      </div>
+    </section>
+
+    <section id="details" class="details hidden">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">BREAKDOWN</div>
+          <h2>Dove finisce la RAL</h2>
+        </div>
+        <div id="effectiveRate" class="rate-badge">—</div>
+      </div>
+
+      <div class="breakdown-grid">
+        <div class="breakdown-card">
+          <div class="row"><span>RAL</span><strong id="gross">—</strong></div>
+          <div class="row"><span>Contributi previdenziali dipendente</span><strong id="inps">—</strong></div>
+          <div class="row"><span>Imponibile fiscale</span><strong id="taxable">—</strong></div>
+          <div class="row"><span>IRPEF lorda</span><strong id="grossIrfpef">—</strong></div>
+          <div class="row"><span>Detrazione lavoro dipendente</span><strong id="deduction">—</strong></div>
+          <div class="row"><span>IRPEF netta</span><strong id="netIrfpef">—</strong></div>
+          <div class="row"><span>Addizionale regionale Lombardia</span><strong id="regional">—</strong></div>
+          <div class="row"><span>Addizionale comunale Milano</span><strong id="municipal">—</strong></div>
+          <div class="row total"><span>Totale trattenute</span><strong id="totalTax">—</strong></div>
+          <div class="row total net"><span>Netto annuale</span><strong id="netAnnual2">—</strong></div>
+        </div>
+
+        <div class="method-card">
+          <h3>Come calcoliamo</h3>
+          <ol>
+            <li>Partiamo dalla RAL e applichiamo il contributo previdenziale standard del lavoratore.</li>
+            <li>Dal reddito lordo deduciamo i contributi per ottenere l'imponibile fiscale.</li>
+            <li>Applichiamo gli scaglioni IRPEF 2026 e la detrazione per lavoro dipendente.</li>
+            <li>Aggiungiamo le addizionali regionale Lombardia e comunale Milano.</li>
+            <li>Il risultato è una <strong>stima annuale</strong>; il mensile è il netto annuale diviso per 12.</li>
+          </ol>
+          <p class="note">Il calcolo è volutamente semplificato per un caso standard. Non include bonus, figli a carico, welfare, fringe benefit, detrazioni personali, premi, tredicesima separata, conguagli o specificità contributive aziendali.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>Prototype · 2026 rules</span>
+      <a href="README.md">Metodo e fonti</a>
+    </footer>
+  </main>
+  <script src="tax-rules.js"></script>
+  <script src="calculator.js"></script>
+</body>
+</html>
