@@ -15,15 +15,22 @@ function calculateProgressiveTax(income, brackets) {
 }
 
 function calculateSalary(ral) {
+  // Simplified standard employee contribution assumption for the prototype.
   const contributions = ral * TAX_RULES.employeeContributionRate;
+
+  // The tax-wedge payment is non-taxable; it is therefore added to the final
+  // cash outcome rather than treated as a withholding.
   const nonTaxableRelief = TAX_RULES.nonTaxableEmployeeRelief(ral);
   const taxable = Math.max(0, ral - contributions - nonTaxableRelief);
 
   const grossIrpef = calculateProgressiveTax(taxable, TAX_RULES.irpefBrackets);
+
+  // Income thresholds for employee deductions refer to taxable/overall income,
+  // not to the contractual RAL before deductible social contributions.
   const baseDeduction = TAX_RULES.employeeDeduction(taxable);
-  const extra65 = TAX_RULES.employeeDeductionExtra65(ral);
+  const extra65 = TAX_RULES.employeeDeductionExtra65(taxable);
   const employeeDeduction = baseDeduction + extra65;
-  const additionalDeduction = TAX_RULES.additionalEmployeeDeduction(ral);
+  const additionalDeduction = TAX_RULES.additionalEmployeeDeduction(taxable);
   const totalDeductions = Math.min(grossIrpef, Math.max(0, employeeDeduction + additionalDeduction));
   const netIrpef = Math.max(0, grossIrpef - totalDeductions);
 
@@ -33,7 +40,7 @@ function calculateSalary(ral) {
     : taxable * TAX_RULES.milanMunicipalRate;
 
   const totalWithholding = contributions + netIrpef + regional + municipal;
-  const netAnnual = Math.max(0, ral - totalWithholding);
+  const netAnnual = Math.max(0, ral - totalWithholding + nonTaxableRelief);
 
   return {
     ral,
