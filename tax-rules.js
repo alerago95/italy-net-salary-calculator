@@ -4,16 +4,16 @@
  * full year, no dependants, no other income and no special individual benefits.
  *
  * The employee contribution rate is deliberately an explicit prototype assumption:
- * actual payroll rates can vary by sector/category and other circumstances.
+ * actual contribution rates can vary by sector/category and other circumstances.
  */
 const TAX_RULES = {
   year: 2026,
   employeeContributionRate: 0.0919,
 
-  // 2026 IRPEF: 23% / 35% / 43%.
+  // 2026 IRPEF: 23% / 33% / 43%.
   irpefBrackets: [
     { upTo: 28000, rate: 0.23 },
-    { upTo: 50000, rate: 0.35 },
+    { upTo: 50000, rate: 0.33 },
     { upTo: Infinity, rate: 0.43 }
   ],
 
