@@ -17,6 +17,7 @@ const TAX_RULES = {
     { upTo: Infinity, rate: 0.43 }
   ],
 
+  // Employee-work deduction, annual full-year simplified case.
   employeeDeduction: (taxable) => {
     if (taxable <= 15000) return 1955;
     if (taxable <= 28000) return 1910 + 1190 * (28000 - taxable) / 13000;
@@ -24,8 +25,8 @@ const TAX_RULES = {
     return 0;
   },
 
-  // 2025-2026 reduction of the tax wedge: this amount does not form part of
-  // taxable employment income for employees in the relevant income bands.
+  // Tax-wedge payment for employees with income up to €20,000.
+  // It does not form part of taxable income and therefore is added to net cash.
   nonTaxableEmployeeRelief: (employmentIncome) => {
     if (employmentIncome <= 8500) return employmentIncome * 0.071;
     if (employmentIncome <= 15000) return employmentIncome * 0.053;
@@ -33,17 +34,18 @@ const TAX_RULES = {
     return 0;
   },
 
-  // Additional employee deduction for total income > €20k and <= €40k.
-  additionalEmployeeDeduction: (grossIncome) => {
-    if (grossIncome > 20000 && grossIncome <= 32000) return 1000;
-    if (grossIncome > 32000 && grossIncome <= 40000) return 1000 * (40000 - grossIncome) / 8000;
+  // Additional employee deduction for overall/taxable income > €20,000 and <= €40,000.
+  additionalEmployeeDeduction: (taxable) => {
+    if (taxable > 20000 && taxable <= 32000) return 1000;
+    if (taxable > 32000 && taxable <= 40000) return 1000 * (40000 - taxable) / 8000;
     return 0;
   },
 
-  // The employee-work deduction is increased by €65 for income > €25k and <= €35k.
-  employeeDeductionExtra65: (grossIncome) =>
-    grossIncome > 25000 && grossIncome <= 35000 ? 65 : 0,
+  // The employee-work deduction is increased by €65 when overall income is > €25,000 and <= €35,000.
+  employeeDeductionExtra65: (taxable) =>
+    taxable > 25000 && taxable <= 35000 ? 65 : 0,
 
+  // Lombardia 2026 regional IRPEF surcharge, progressive by income band.
   lombardyRegionalBrackets: [
     { upTo: 15000, rate: 0.0123 },
     { upTo: 28000, rate: 0.0158 },
@@ -51,6 +53,7 @@ const TAX_RULES = {
     { upTo: Infinity, rate: 0.0173 }
   ],
 
+  // Milan: 0.8% single rate, with €23,000 income exemption.
   milanMunicipalRate: 0.008,
   milanMunicipalExemption: 23000,
   currency: 'EUR'
