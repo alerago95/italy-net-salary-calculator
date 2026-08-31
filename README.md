@@ -13,42 +13,56 @@ The prototype intentionally focuses on one standard scenario:
 - employee with an indefinite employment contract
 - private-sector employee
 - resident in Milan
-- no personal tax benefits or special exemptions
-- annual estimate, with average monthly net calculated as annual net / 12
+- full-year employment
+- no dependants, other income, special tax regimes or individual benefits
+- average monthly net = annual net / 12
 
 The calculator is client-side only: there is no backend, no API, and no personal data storage.
 
 ## Calculation flow
 
-`RAL → employee social contributions → taxable income → gross IRPEF → employee-work deduction → net IRPEF → regional surcharge → municipal surcharge → estimated net salary`
+`RAL → employee social contributions → taxable income → gross IRPEF → employee-work deductions → net IRPEF → regional surcharge → municipal surcharge → estimated net salary`
+
+For the low-income tax-wedge measure, the non-taxable amount is treated as a cash benefit and therefore added to the final net result rather than being shown as a withholding.
 
 The calculation engine is deliberately isolated in `tax-rules.js` and `calculator.js` so assumptions can be inspected and changed without touching the UI.
 
-## 2026 assumptions used in the prototype
+## 2026 rules and assumptions
 
-- Employee contribution rate: 9.19% (simplified standard private-sector assumption).
-- IRPEF brackets: 23% up to €28,000; 33% from €28,001 to €50,000; 43% above €50,000.
-- Employee-work deduction: simplified annual formula implemented in `tax-rules.js`.
-- Lombardia regional surcharge: simplified prototype assumption of 1.73%.
-- Milan municipal surcharge: simplified prototype assumption of 0.80%.
+- Employee contribution rate: **9.19%**, used as an explicit simplified standard private-sector assumption. Actual contribution rates can vary by sector, category and other circumstances.
+- IRPEF: **23% up to €28,000; 35% from €28,001 to €50,000; 43% above €50,000**.
+- Employee-work deduction: annual full-year formula based on taxable/overall income.
+- Additional employee deduction: €1,000 for taxable/overall income above €20,000 and up to €32,000, then progressively reduced to zero at €40,000.
+- €65 increase to the employee-work deduction for taxable/overall income above €25,000 and up to €35,000.
+- Tax-wedge payment for employment income up to €20,000: 7.1%, 5.3% or 4.8% depending on the employment-income band; it is non-taxable and is therefore added to net cash.
+- Lombardia regional surcharge: progressive 2026 rates of 1.23%, 1.58%, 1.72% and 1.73% across the applicable income bands.
+- Milan municipal surcharge: **0.8%**, with exemption for taxable income up to **€23,000**.
 
-These rules are intentionally not a substitute for payroll processing. Local surcharges, contribution ceilings/rates, deductions, tax credits, 13th salary treatment, benefits, bonuses and year-end adjustments can materially change an actual payslip.
+The 2026 IRPEF brackets and €1,955 employee deduction are established by the Italian tax reform framework. The tax-wedge measures are sourced from the 2025 Budget Law and the current tax guidance; the current consolidated income-tax framework entered into force on 4 July 2026.
 
-## Why these simplifications
+## Important scope decision
 
-The task explicitly asks for a functioning prototype in a simple and standard case rather than a complete payroll engine. The objective is therefore transparency: every assumption is visible in code and the user can understand the path from gross to net.
+This is a **prototype, not a payroll engine**. The 9.19% employee contribution rate is intentionally a modelling assumption. The prototype also excludes contribution ceilings, sector-specific rates, treatment-integration edge cases, 13th-salary timing, welfare/fringe benefits, bonuses, dependants, personal deductions, multiple employments, other income and year-end payroll adjustments.
+
+This makes the model explainable during an interview: every simplification is explicit and can be replaced by a versioned rule set in a production implementation.
 
 ## Validation
 
-`tests.js` contains browser-console sanity checks covering positive net salary, gross/net ordering, contribution presence and monotonicity across representative RAL values.
+`tests.js` contains browser-console checks for:
 
-## Sources to verify before production use
+- positive and bounded net results;
+- progressive net-income behaviour;
+- taxable income below gross income;
+- annual/monthly reconciliation;
+- low-income tax-wedge treatment;
+- municipal-tax boundary behaviour.
 
-For a production-grade implementation, rules should be versioned against primary Italian sources and updated by tax year:
+## Primary sources used for validation
 
-- Agenzia delle Entrate — IRPEF and employee tax guidance
-- INPS — employee social-security contribution rules
-- Regione Lombardia — regional IRPEF surcharge
-- Comune di Milano — municipal IRPEF surcharge
+- **Normattiva — Legge 30 dicembre 2024, n. 207**, including the three IRPEF brackets, €1,955 employee deduction and tax-wedge measures.
+- **Agenzia delle Entrate — Dichiarazione precompilata**, guidance on the tax-wedge percentages and additional employee deduction.
+- **Dipartimento delle Finanze — Fiscalità locale**, Lombardia 2026 regional IRPEF rates.
+- **Comune di Milano**, municipal IRPEF rate and €23,000 exemption.
+- **Decreto legislativo 19 giugno 2026, n. 117**, current consolidated income-tax framework effective from 4 July 2026.
 
-This prototype uses simplified assumptions to keep the scope aligned with the interview task.
+For production use, these rules should be versioned by tax year and maintained against official primary sources.
