@@ -1,25 +1,56 @@
 /*
- * Simplified 2026 rules for the Jet HR prototype.
- * Assumptions: private-sector employee, indefinite contract, Milan resident,
- * no personal tax credits/benefits, standard employee contribution rate.
+ * 2026 rules for the Jet HR prototype.
+ * Scope: standard private-sector employee, indefinite contract, Milan resident,
+ * full year, no dependants, no other income and no special individual benefits.
+ *
+ * The employee contribution rate is deliberately an explicit prototype assumption:
+ * actual payroll rates can vary by sector/category and other circumstances.
  */
 const TAX_RULES = {
   year: 2026,
   employeeContributionRate: 0.0919,
+
   irpefBrackets: [
     { upTo: 28000, rate: 0.23 },
     { upTo: 50000, rate: 0.33 },
     { upTo: Infinity, rate: 0.43 }
   ],
-  // Standard employee-work deduction, implemented as a simplified annual formula.
+
   employeeDeduction: (taxable) => {
     if (taxable <= 15000) return 1955;
     if (taxable <= 28000) return 1910 + 1190 * (28000 - taxable) / 13000;
     if (taxable <= 50000) return 1910 * (50000 - taxable) / 22000;
     return 0;
   },
-  // Simplified Lombardia regional surcharge assumption for this prototype.
-  lombardyRegionalRate: 0.0173,
+
+  // General 2025-2026 employee tax relief: amount that does not enter taxable income.
+  // Applied here only for the standard employee scenario.
+  nonTaxableEmployeeRelief: (employmentIncome) => {
+    if (employmentIncome <= 8500) return employmentIncome * 0.071;
+    if (employmentIncome <= 15000) return employmentIncome * 0.053;
+    if (employmentIncome <= 20000) return employmentIncome * 0.048;
+    return 0;
+  },
+
+  // Additional employee deduction introduced by the 2025 tax-wedge reform.
+  additionalEmployeeDeduction: (grossIncome) => {
+    if (grossIncome > 20000 && grossIncome <= 32000) return 1000;
+    if (grossIncome > 32000 && grossIncome <= 40000) return 1000 * (40000 - grossIncome) / 8000;
+    return 0;
+  },
+
+  // 2026 employee deduction is increased by €65 for gross income > €25k and <= €35k.
+  employeeDeductionExtra65: (grossIncome) =>
+    grossIncome > 25000 && grossIncome <= 35000 ? 65 : 0,
+
+  lombardyRegionalBrackets: [
+    { upTo: 15000, rate: 0.0123 },
+    { upTo: 28000, rate: 0.0158 },
+    { upTo: 50000, rate: 0.0172 },
+    { upTo: Infinity, rate: 0.0173 }
+  ],
+
   milanMunicipalRate: 0.008,
+  milanMunicipalExemption: 23000,
   currency: 'EUR'
 };
