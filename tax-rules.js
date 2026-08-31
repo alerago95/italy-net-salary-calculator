@@ -10,9 +10,10 @@ const TAX_RULES = {
   year: 2026,
   employeeContributionRate: 0.0919,
 
+  // 2026 IRPEF: 23% / 35% / 43%.
   irpefBrackets: [
     { upTo: 28000, rate: 0.23 },
-    { upTo: 50000, rate: 0.33 },
+    { upTo: 50000, rate: 0.35 },
     { upTo: Infinity, rate: 0.43 }
   ],
 
@@ -23,8 +24,8 @@ const TAX_RULES = {
     return 0;
   },
 
-  // General 2025-2026 employee tax relief: amount that does not enter taxable income.
-  // Applied here only for the standard employee scenario.
+  // 2025-2026 reduction of the tax wedge: this amount does not form part of
+  // taxable employment income for employees in the relevant income bands.
   nonTaxableEmployeeRelief: (employmentIncome) => {
     if (employmentIncome <= 8500) return employmentIncome * 0.071;
     if (employmentIncome <= 15000) return employmentIncome * 0.053;
@@ -32,14 +33,14 @@ const TAX_RULES = {
     return 0;
   },
 
-  // Additional employee deduction introduced by the 2025 tax-wedge reform.
+  // Additional employee deduction for total income > €20k and <= €40k.
   additionalEmployeeDeduction: (grossIncome) => {
     if (grossIncome > 20000 && grossIncome <= 32000) return 1000;
     if (grossIncome > 32000 && grossIncome <= 40000) return 1000 * (40000 - grossIncome) / 8000;
     return 0;
   },
 
-  // 2026 employee deduction is increased by €65 for gross income > €25k and <= €35k.
+  // The employee-work deduction is increased by €65 for income > €25k and <= €35k.
   employeeDeductionExtra65: (grossIncome) =>
     grossIncome > 25000 && grossIncome <= 35000 ? 65 : 0,
 
