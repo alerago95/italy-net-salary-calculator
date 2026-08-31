@@ -52,10 +52,11 @@
           <div class="row"><span>Contributi previdenziali dipendente</span><strong id="inps">—</strong></div>
           <div class="row"><span>Imponibile fiscale</span><strong id="taxable">—</strong></div>
           <div class="row"><span>IRPEF lorda</span><strong id="grossIrfpef">—</strong></div>
-          <div class="row"><span>Detrazione lavoro dipendente</span><strong id="deduction">—</strong></div>
+          <div class="row"><span>Detrazioni lavoro dipendente</span><strong id="deduction">—</strong></div>
           <div class="row"><span>IRPEF netta</span><strong id="netIrfpef">—</strong></div>
           <div class="row"><span>Addizionale regionale Lombardia</span><strong id="regional">—</strong></div>
           <div class="row"><span>Addizionale comunale Milano</span><strong id="municipal">—</strong></div>
+          <div class="row" id="reliefRow" hidden><span>Somma non imponibile cuneo fiscale</span><strong id="relief">—</strong></div>
           <div class="row total"><span>Totale trattenute</span><strong id="totalTax">—</strong></div>
           <div class="row total net"><span>Netto annuale</span><strong id="netAnnual2">—</strong></div>
         </div>
@@ -64,12 +65,12 @@
           <h3>Come calcoliamo</h3>
           <ol>
             <li>Partiamo dalla RAL e applichiamo il contributo previdenziale standard del lavoratore.</li>
-            <li>Dal reddito lordo deduciamo i contributi per ottenere l'imponibile fiscale.</li>
-            <li>Applichiamo gli scaglioni IRPEF 2026 e la detrazione per lavoro dipendente.</li>
+            <li>Dal reddito lordo deduciamo i contributi e, quando applicabile, la somma non imponibile del cuneo fiscale per ottenere l'imponibile.</li>
+            <li>Applichiamo gli scaglioni IRPEF 2026 e le detrazioni da lavoro dipendente.</li>
             <li>Aggiungiamo le addizionali regionale Lombardia e comunale Milano.</li>
             <li>Il risultato è una <strong>stima annuale</strong>; il mensile è il netto annuale diviso per 12.</li>
           </ol>
-          <p class="note">Il calcolo è volutamente semplificato per un caso standard. Non include bonus, figli a carico, welfare, fringe benefit, detrazioni personali, premi, tredicesima separata, conguagli o specificità contributive aziendali.</p>
+          <p class="note">Il calcolo è volutamente semplificato per un caso standard. Non include welfare, fringe benefit, premi, tredicesima separata, conguagli, specificità contributive di settore, altri redditi o detrazioni personali.</p>
         </div>
       </div>
     </section>
