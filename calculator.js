@@ -2,13 +2,13 @@ function formatEUR(value) {
   return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
 }
 
-function calculateIrpef(taxable) {
+function calculateProgressiveTax(income, brackets) {
   let previous = 0;
   let tax = 0;
-  for (const bracket of TAX_RULES.irpefBrackets) {
-    const portion = Math.max(0, Math.min(taxable, bracket.upTo) - previous);
+  for (const bracket of brackets) {
+    const portion = Math.max(0, Math.min(income, bracket.upTo) - previous);
     tax += portion * bracket.rate;
-    if (taxable <= bracket.upTo) break;
+    if (income <= bracket.upTo) break;
     previous = bracket.upTo;
   }
   return tax;
@@ -16,15 +16,42 @@ function calculateIrpef(taxable) {
 
 function calculateSalary(ral) {
   const contributions = ral * TAX_RULES.employeeContributionRate;
-  const taxable = Math.max(0, ral - contributions);
-  const grossIrpef = calculateIrpef(taxable);
-  const deduction = Math.min(grossIrpef, Math.max(0, TAX_RULES.employeeDeduction(taxable)));
-  const netIrpef = Math.max(0, grossIrpef - deduction);
-  const regional = taxable * TAX_RULES.lombardyRegionalRate;
-  const municipal = taxable * TAX_RULES.milanMunicipalRate;
+  const nonTaxableRelief = TAX_RULES.nonTaxableEmployeeRelief(ral);
+  const taxable = Math.max(0, ral - contributions - nonTaxableRelief);
+
+  const grossIrpef = calculateProgressiveTax(taxable, TAX_RULES.irpefBrackets);
+  const baseDeduction = TAX_RULES.employeeDeduction(taxable);
+  const extra65 = TAX_RULES.employeeDeductionExtra65(ral);
+  const employeeDeduction = baseDeduction + extra65;
+  const additionalDeduction = TAX_RULES.additionalEmployeeDeduction(ral);
+  const totalDeductions = Math.min(grossIrpef, Math.max(0, employeeDeduction + additionalDeduction));
+  const netIrpef = Math.max(0, grossIrpef - totalDeductions);
+
+  const regional = calculateProgressiveTax(taxable, TAX_RULES.lombardyRegionalBrackets);
+  const municipal = taxable <= TAX_RULES.milanMunicipalExemption
+    ? 0
+    : taxable * TAX_RULES.milanMunicipalRate;
+
   const totalWithholding = contributions + netIrpef + regional + municipal;
   const netAnnual = Math.max(0, ral - totalWithholding);
-  return { ral, contributions, taxable, grossIrpef, deduction, netIrpef, regional, municipal, totalWithholding, netAnnual, netMonthly: netAnnual / 12, effectiveRate: totalWithholding / ral };
+
+  return {
+    ral,
+    contributions,
+    nonTaxableRelief,
+    taxable,
+    grossIrpef,
+    employeeDeduction,
+    additionalDeduction,
+    totalDeductions,
+    netIrpef,
+    regional,
+    municipal,
+    totalWithholding,
+    netAnnual,
+    netMonthly: netAnnual / 12,
+    effectiveRate: totalWithholding / ral
+  };
 }
 
 function render(result) {
@@ -35,7 +62,7 @@ function render(result) {
   set('inps', `− ${formatEUR(result.contributions)}`);
   set('taxable', formatEUR(result.taxable));
   set('grossIrfpef', `− ${formatEUR(result.grossIrpef)}`);
-  set('deduction', `+ ${formatEUR(result.deduction)}`);
+  set('deduction', `+ ${formatEUR(result.totalDeductions)}`);
   set('netIrfpef', `− ${formatEUR(result.netIrpef)}`);
   set('regional', `− ${formatEUR(result.regional)}`);
   set('municipal', `− ${formatEUR(result.municipal)}`);
