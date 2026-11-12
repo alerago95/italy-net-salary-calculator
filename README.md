@@ -1,6 +1,5 @@
 # Italy Net Salary Calculator
 
-Prototype created for the Jet HR Product Builder task.
 
 ## Goal
 
